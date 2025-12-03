@@ -173,7 +173,10 @@ class vLLMRollout(BaseRollout):
         # parse idx from torch.Tensor to List[List[str]]
         for i in range(batch_size):
             idx_list.append(_pre_process_inputs(self.pad_token_id, idx[i]))
-
+        non_tensor_batch = prompts.non_tensor_batch
+        vllm_inputs = [
+                {"prompt_token_ids": raw_prompt_ids} for raw_prompt_ids in non_tensor_batch.pop("raw_prompt_ids")
+            ]
         do_sample = prompts.meta_info.get('do_sample', True)
         if not do_sample:
             kwargs = {
@@ -188,7 +191,7 @@ class vLLMRollout(BaseRollout):
         # users can customize different sampling_params at different run
         with self.update_sampling_params(**kwargs):
             output = self.inference_engine.generate(
-                prompts=None,  # because we have already convert it to prompt token id
+                prompts=vllm_inputs,  # because we have already convert it to prompt token id
                 sampling_params=self.sampling_params,
                 prompt_token_ids=idx_list,
                 use_tqdm=False)
