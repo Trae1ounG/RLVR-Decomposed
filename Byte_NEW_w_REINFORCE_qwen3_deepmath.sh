@@ -15,20 +15,25 @@ TEST_FILE=${TEST_FILE:-["/opt/tiger/RLVR-Decomposed/data/aime_2024.parquet","/op
 use_dynamic_bsz=True
 actor_ppo_max_token_len=$((1024 * 32))
 infer_ppo_max_token_len=$((1024 * 32))
+temperature=1.0
+top_p=1.0
+top_k=-1 # 0 for HF rollout, -1 for vLLM rollout
+
 
 # advantage="positive"   # PSR
 # advantage="negative"   # NSR
-# advantage="weighted"   # W-REINFORCE
+advantage="weighted"   # W-REINFORCE
 positive_advantage_weight=0.1   # For W-REINFORCE only
 prompt_template_type="qwen3_no_thinking"
 max_prompt_length=$((1024 * 1))
+loss_agg_mode="token-mean"
 max_response_length=$((1024 * 8))
 kl_coef=0.0
 lr=1e-6
 experiment_name="Qwen3-4b_byte_w_reinforce_deepmath5k_bsz128_mini32_n8_resp8k_higherclip0.2_lr1e-6$"
 
 
-python3 -m verl.trainer.main_ppo \
+ray job submit --runtime-env=verl/trainer/runtime_env.yaml --no-wait -- python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=psr_nsr \
     algorithm.advantage=$advantage \
     data.train_files="${TRAIN_FILE}" \
@@ -40,12 +45,10 @@ python3 -m verl.trainer.main_ppo \
     data.train_batch_size=128 \
     data.val_batch_size=64 \
     data.prompt_template_type=$prompt_template_type \
-    actor_rollout_ref.model.path=$model_name \
+    actor_rollout_ref.model.path=${MODEL_PATH} \
     actor_rollout_ref.actor.optim.lr=$lr \
     actor_rollout_ref.actor.entropy_coeff=0 \
     actor_rollout_ref.actor.grad_clip=1.0 \
-    actor_rollout_ref.actor.clip_ratio_c=10.0 \
-    actor_rollout_ref.actor.loss_agg_mode=${loss_agg_mode} \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.actor.use_dynamic_bsz=True \
@@ -61,9 +64,6 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.rollout.n=8 \
     actor_rollout_ref.rollout.max_num_batched_tokens=$((max_prompt_length + max_response_length)) \
     actor_rollout_ref.rollout.temperature=${temperature} \
-    actor_rollout_ref.rollout.val_kwargs.temperature=${temperature} \
-    actor_rollout_ref.rollout.val_kwargs.do_sample=True \
-    actor_rollout_ref.rollout.val_kwargs.n=1 \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     trainer.default_local_dir=/mnt/hdfs/tanyuqiao/entropy_grad/checkpoints/${project_name}/${experiment_name} \
     trainer.experiment_name=${experiment_name} \
