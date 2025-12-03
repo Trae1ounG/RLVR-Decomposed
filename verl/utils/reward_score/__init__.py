@@ -30,6 +30,13 @@ def _default_compute_score(data_source, solution_str, ground_truth, extra_info=N
     ]:
         from . import prime_math
         res = prime_math.compute_score(solution_str, ground_truth)
+    elif data_source == "math_dapo" or data_source.startswith("aime") or data_source.startswith("olympiads") or data_source.startswith("minerva"):
+    # from . import math_dapo
+
+    # res = math_dapo.compute_score(solution_str, ground_truth)
+        from . import math
+
+        res = math.compute_score(solution_str, ground_truth)
     elif data_source in ['codecontests', 'apps', 'codeforces', 'taco']:
         from . import prime_code
         res = prime_code.compute_score(solution_str, ground_truth, continuous=True)
