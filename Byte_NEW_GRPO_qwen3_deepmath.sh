@@ -2,8 +2,7 @@
 set -xeuo pipefail
 pip list
 export WANDB_MODE=online
-export WANDB_BASE_URL="https://api.bandw.top"
-export WANDB_API_KEY=652495ce2365c4a81500574ad4bcee83f91ee48d
+
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 project_name='Internal_Policy_Deepmath1029'
  
