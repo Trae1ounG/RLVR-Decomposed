@@ -8,7 +8,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 project_name='Internal_Policy_Deepmath1029'
 
 
-MODEL_PATH=${MODEL_PATH:-"/mnt/hdfs/tanyuqiao/models/models/Qwen3-4B"}
+MODEL_PATH=${MODEL_PATH:-"/mnt/hdfs/tanyuqiao/models/models/Qwen3-8B"}
 # CKPTS_DIR=${CKPTS_DIR:-"${RAY_DATA_HOME}/verl/checkpoints/${project_name}/${exp_name}"}
 TRAIN_FILE=${TRAIN_FILE:-"/opt/tiger/RLVR-Decomposed/data/deepmath-5k.parquet"}
 TEST_FILE=${TEST_FILE:-["/opt/tiger/RLVR-Decomposed/data/aime_2024.parquet","/opt/tiger/RLVR-Decomposed/data/aime_2025.parquet","/opt/tiger/RLVR-Decomposed/data/amc2023.parquet","/opt/tiger/RLVR-Decomposed/data/math500.parquet"]}
@@ -30,7 +30,7 @@ loss_agg_mode="token-mean"
 max_response_length=$((1024 * 8))
 kl_coef=0.0
 lr=1e-6
-experiment_name="Qwen3-4b_byte_w_reinforce_deepmath5k_bsz128_mini32_n8_resp8k_higherclip0.2_lr1e-6$"
+experiment_name="Qwen3-8b_byte_w_reinforce_deepmath5k_bsz128_mini32_n8_resp8k_higherclip0.2_lr1e-6"
 
 
 ray job submit --runtime-env=verl/trainer/runtime_env.yaml --no-wait -- python3 -m verl.trainer.main_ppo \

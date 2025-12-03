@@ -138,7 +138,7 @@ class RLHFDataset(Dataset):
         elif self.prompt_template_type == "simple":
             self.prompt_template = "Question:\n{input}\nAnswer:\nLet's think step by step.\n"
         elif self.prompt_template_type == "qwen3_no_thinking":
-            self.prompt_template = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{input}\n<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n"
+            self.prompt_template = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\n{input}\nPlease reason step by step, and put your final answer within \\boxed{}.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n"
         elif self.prompt_template_type == "llama":
             self.prompt_template = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful assistant.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{input}\nPlease reason step by step, and put your final answer within \\boxed{}.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
         else:
@@ -176,7 +176,7 @@ class RLHFDataset(Dataset):
 
         chat = row_dict.pop(self.prompt_key)
 
-        prompt_with_chat_template = self.prompt_template.replace("{input}", chat[0]['content'])
+        prompt_with_chat_template = self.prompt_template.replace("{input}", chat[1]['content'])
 
         if self.image_key in row_dict:  # expand image token
             raw_prompt = prompt_with_chat_template.replace('<image>', '<|vision_start|><|image_pad|><|vision_end|>')
