@@ -92,7 +92,7 @@ class Tracking(object):
     def log(self, data, step, backend=None, commit=False):
         for default_backend, logger_instance in self.logger.items():
             if backend is None or default_backend in backend:
-                logger_instance.log(data=data, step=step, commit=commit)
+                logger_instance.log(data=data, step=step)
 
     def __del__(self):
         if 'wandb' in self.logger:
