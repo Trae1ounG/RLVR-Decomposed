@@ -189,9 +189,17 @@ class vLLMRollout(BaseRollout):
             vllm_inputs = [{
                 'prompt_token_ids': raw_prompt_ids
             } for raw_prompt_ids in non_tensor_batch.pop('raw_prompt_ids')]
+        for input_data in vllm_inputs:
+            # Ensure token IDs are lists or numpy arrays
+            if not isinstance(input_data["prompt_token_ids"], list | np.ndarray):
+                raise TypeError(
+                    f"prompt_token_ids must be a list or numpy array, got {type(input_data['prompt_token_ids'])}"
+                )
 
+            input_data["prompt_token_ids"] = list(input_data["prompt_token_ids"])
         do_sample = prompts.meta_info.get('do_sample', True)
-        qwen3 = prompts.meta_info.get('qwen3', False)
+        # qwen3 = prompts.meta_info.get('qwen3', False)
+        qwen3 = True
         if not do_sample and not qwen3:
             kwargs = {
                 'best_of': 1,
