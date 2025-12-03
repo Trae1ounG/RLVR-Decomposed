@@ -118,6 +118,7 @@ ray job submit --runtime-env=verl/trainer/runtime_env.yaml --no-wait -- python3 
     trainer.save_freq=50 \
     trainer.total_training_steps=300 \
     trainer.default_local_dir=/mnt/hdfs/tanyuqiao/entropy_grad/checkpoints/${project_name}/${experiment_name} \
+    trainer.validation_data_dir=/mnt/hdfs/tanyuqiao/entropy_grad/checkpoints/${project_name}/${experiment_name}/valid_data \
     trainer.experiment_name=${experiment_name} \
     trainer.resume_mode=auto  $@
 #
