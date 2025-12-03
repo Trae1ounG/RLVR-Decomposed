@@ -212,10 +212,10 @@ class vLLMRollout(BaseRollout):
         elif not do_sample and qwen3:
             kwargs = {
                 'best_of': 1,
-                'top_p': 0.8,
-                'top_k': 20,
+                'top_p': 1,
+                'top_k': -1,
                 'min_p': 0.0,
-                'temperature': 0.7,
+                'temperature': 1,
                 'n': 1  # if greedy, only 1 response
             }
 
